@@ -9,9 +9,7 @@ mac=$1
 
 result="$(./device_ip $mac | xargs ./check_connected)"
 
-echo $result
-
-#if [[ "$result" -eq "1" ]]; then
-#	name=$(cat residents.yaml | grep -E -o "^$mac: (.*)$" | awk '{ print $2 }')
-#	echo $name
-#fi
+if [[ "$result" -eq "1" ]]; then
+	name=$(cat residents.yaml | grep -E -o "^$mac: (.*)$" | awk '{ print $2 }')
+	echo $name
+fi
