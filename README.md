@@ -20,7 +20,13 @@ An idea about displaying who is currently at home, thanks to [Dan Slocombe](http
       - Install via `npm install -g webpack`
     - Or install all 3 with `npm install -g typescript typings webpack`
 
+## Building
+
+  - Run `./build.sh`
+
 ## Running
+
+### Standalone script
  - You will need a yaml file mapping MAC addresses to Names in the form:
 
 ```yaml
@@ -29,3 +35,12 @@ An idea about displaying who is currently at home, thanks to [Dan Slocombe](http
 38:F6:AC:4D:ED:09: Full House
 ```
  - Then run using `./bin/homenum_revelio` from within the directory or `homenum_revelio` by adding the `bin` folder to your `PATH`
+
+### Server
+  - Run using `./server/server` and open [localhost:8080](http://localhost:8080)
+  - You can also pass in flags:
+    - `-p port` to set a specific port for the server, default is `8080`
+    - `-static path/to/static/files` to set the static file server, default is `./client`
+    - `-r path/to/residents.yaml` to set where the map of MAC addresses to names is, default is `./residents.yaml`
+
+**Note:** `-static` and `-r` are relative to the root directory
