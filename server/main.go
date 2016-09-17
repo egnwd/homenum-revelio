@@ -35,9 +35,12 @@ func main() {
 	c := parseArgs()
 	c.events = make(chan event)
 
+	fileServer := http.FileServer(http.Dir(c.static))
+
 	r := mux.NewRouter()
 	r.Handle("/", WhoIsHomeHandler(c.static))
 	r.Handle("/updates", updatesHandler(c.events))
+	r.PathPrefix("/assets").Handler(http.StripPrefix("/assets", fileServer))
 
 	beginScanning(c)
 
@@ -94,7 +97,7 @@ func parseArgs() (c *config) {
 	c = new(config)
 	flag.IntVar(&c.port, "p", 8080, "Port for the server")
 	flag.StringVar(&c.static, "static", "./client", "")
-	flag.StringVar(&c.residents, "static", "./residents.yaml", "")
+	flag.StringVar(&c.residents, "r", "./residents.yaml", "")
 	flag.Parse()
 
 	return
