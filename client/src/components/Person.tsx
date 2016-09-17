@@ -18,15 +18,13 @@ export class Person implements IPerson {
 export class PersonItem extends React.Component<IPerson, {}> {
   render() {
     var name = this.props.name
-    var status_name = this.props.status ? "In" : "Out"
-    
+    var status_name = this.props.status ? "in" : "out"
+
     return (
-      <tr>
-        <td>
+      <tr className={ status_name }>
+        <td className="status"></td>
+        <td className="name">
           { name }
-        </td>
-        <td>
-          { status_name }
         </td>
       </tr>
     )

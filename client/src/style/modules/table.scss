@@ -1,4 +1,9 @@
 table {
-  width: 960px;
+  width: 640px;
   display: flex;
+  align-self: center;
+
+  tbody {
+    width: 100%;
+  }
 }
