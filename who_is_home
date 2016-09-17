@@ -1,0 +1,17 @@
+#!/bin/bash
+
+count=0
+while read l; do
+	if [[ $l =~ (([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})) ]]; then
+		mac=${BASH_REMATCH[1]}
+		name=$(./is_home $mac)
+		if [[ $name != "" ]]; then
+			((count+=1))
+			echo "$name is home"
+		fi
+	fi
+done < residents.yaml
+
+if [[ "$count" -eq "0" ]]; then
+	echo "No one home"
+fi

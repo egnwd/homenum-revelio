@@ -1,0 +1,17 @@
+#!/bin/bash
+
+if [[ -z $1 ]]; then
+	echo 'Usage: is_home MAC_ADDRESS'
+	exit 1
+fi
+
+mac=$1
+
+result="$(./device_ip $mac | xargs ./check_connected)"
+
+echo $result
+
+#if [[ "$result" -eq "1" ]]; then
+#	name=$(cat residents.yaml | grep -E -o "^$mac: (.*)$" | awk '{ print $2 }')
+#	echo $name
+#fi

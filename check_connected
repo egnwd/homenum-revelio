@@ -1,0 +1,32 @@
+#!/bin/bash
+
+if [[ -z $1 ]]; then
+	echo 'Usage: check_connected IP_ADDRESS'
+	exit 1
+fi
+
+ip_regex='^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$'
+
+if [[ ! $1 =~ $ip_regex ]]; then
+	echo 0
+	exit
+fi
+
+ip=$1
+
+ping_data="$(nmap -p 1 -Pn $ip)"
+
+if [[ $ping_data =~ (([0-9]{1,3})\.[0-9]+% packet loss) ]] ; then
+	loss=$((BASH_REMATCH[2]))
+
+	if [[ "$loss" -lt "100" ]]; then
+		echo 1
+		exit
+	else
+		echo 0
+		exit
+	fi
+else
+	echo "Ping failed"
+	exit 1
+fi

@@ -1,0 +1,20 @@
+#!/bin/bash
+
+if ([[ -z $1 ]] || ! [[ $1 =~ ^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$ ]]) ; then
+	echo 'Usage: device_ip MAC_ADDRESS'
+    exit 1
+fi
+
+mac=$1
+
+ip_regex='((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?))'
+
+data=$(arp -an | grep $mac)
+
+if [[ $data =~ $ip_regex ]]; then
+	ip=${BASH_REMATCH[1]}
+	echo $ip
+else
+	echo 0
+fi
+
