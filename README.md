@@ -9,7 +9,7 @@ An idea about displaying who is currently at home, thanks to [Dan Slocombe](http
   - `nmap`
     - Install from [nmap.org/download.html](https://nmap.org/download.html)
   - [Go](https://golang.org)
-    - Install from [golang.org/doc/install](https://golang.org/doc/install)
+    - Install from [golang.org/doc/install](https://golang.org/doc/install), this page contains information about setting up a go environment if you do not have one set up
   - [npm](https://github.com/npm/npm)
     - Install via `curl -L https://www.npmjs.com/install.sh | sh`
     - [Typescript](https://www.typescriptlang.org)
@@ -19,9 +19,11 @@ An idea about displaying who is currently at home, thanks to [Dan Slocombe](http
     - [Webpack](http://webpack.github.io)
       - Install via `npm install -g webpack`
     - Or install all 3 with `npm install -g typescript typings webpack`
+    - Then link `typescript` and `webpack` using `npm link typescript webpack`
 
 ## Building
 
+  - Run `(cd client; npm install)` initially and if you add any packages
   - Run `./build.sh`
 
 ## Running
