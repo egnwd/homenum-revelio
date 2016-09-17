@@ -16,4 +16,4 @@ An idea about displaying who is currently at home, thanks to [Dan Slocombe](http
 59:65:11:03:56:68: Other Name
 38:F6:AC:4D:ED:09: Full House
 ```
- - Then run using `./who_is_home` from within the directory or `who_is_home` by adding the folder to your `PATH`
+ - Then run using `./homenum_revelio` from within the directory or `homenum_revelio` by adding the folder to your `PATH`
