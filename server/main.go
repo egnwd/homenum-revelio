@@ -46,7 +46,15 @@ func main() {
 
 	log.Println("Listening on localhost:", c.port)
 	port := fmt.Sprintf(":%d", c.port)
-	log.Fatal(http.ListenAndServe(port, r))
+	log.Fatal(http.ListenAndServe(port, Log(r)))
+}
+
+// Logs requests made to the server
+func Log(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		log.Printf("%s %s %s", r.RemoteAddr, r.Method, r.URL)
+		next.ServeHTTP(w, r)
+	})
 }
 
 // WhoIsHomeHandler displays a list of people on the network

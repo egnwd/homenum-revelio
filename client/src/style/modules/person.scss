@@ -1,0 +1,14 @@
+tr {
+  padding: 20px;
+  td {
+    color: #f1f1f1;
+    font-size: 24px;
+    &.name {
+      flex-grow: 2;
+    }
+
+    &.status {
+      flex-grow: 1;
+    }
+  }
+}

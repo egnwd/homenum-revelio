@@ -5,7 +5,7 @@ const path = require('path')
 const sassLoaders = [
   'css-loader',
   'postcss-loader',
-  'sass-loader?indentedSyntax=sass&includePaths[]=' + path.resolve(__dirname, './src')
+  'sass-loader?includePaths[]=' + path.resolve(__dirname, './src')
 ]
 
 const config = {
@@ -22,7 +22,7 @@ const config = {
       // All files with a '.ts' or '.tsx' extension will be handled by 'ts-loader'.
       { test: /\.tsx?$/, loader: "ts-loader" },
       {
-        test: /\.sass$/,
+        test: /\.scss$/,
         loader: ExtractTextPlugin.extract('style-loader', sassLoaders.join('!'))
       }
     ],
@@ -53,7 +53,7 @@ const config = {
   },
 
   resolve: {
-    extensions: ["", ".webpack.js", ".web.js", ".ts", ".tsx", ".js", ".sass"],
+    extensions: ["", ".webpack.js", ".web.js", ".ts", ".tsx", ".js", ".scss"],
     root: [path.join(__dirname, './src')]
   }
 }
