@@ -1,0 +1,83 @@
+#!/bin/bash
+
+if [[ -z $1 ]]; then
+	echo 'Usage: homenum_revelio path/to/residents.yaml'
+	exit 1
+fi
+
+residents=$1
+
+if [[ ! -f $residents ]]; then
+	echo "Residents file required"
+	exit 1
+fi
+
+ip_regex='((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?))'
+mac_regex='(([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2}))'
+
+function is_home() {
+	if [[ -z $1 ]]; then
+		echo 'Usage: is_home(mac_address)' >&2
+		exit 1
+	fi
+
+	mac=$1
+	ip=$(device_ip $mac)
+	result=$(check_connected $ip)
+
+	if [[ $result -eq "0" ]]; then
+		name=$(cat $residents | grep -E -o "^$mac: (.*)$" | awk '{ print $2 }')
+		echo $name
+	fi
+}
+
+function check_connected() {
+	if [[ -z $1 ]]; then
+		echo 'Usage: check_connected(ip_address)' >&2
+		exit 1
+	fi
+
+	if [[ ! $1 =~ $ip_regex ]]; then
+		echo 1
+		exit
+	fi
+
+	ip=$1
+	ping_data="$(nmap -p 7 $ip)"
+
+	[[ $ping_data =~ (Host is up) ]]; echo $?
+}
+
+function device_ip() {
+	if [[ -z $1 || ! $1 =~ $mac_regex ]]; then
+		echo 'Usage: device_ip(mac_address)' >&2
+	   	exit 1
+	fi
+
+	mac=$1
+	data=$(arp -an | grep $mac)
+
+	if [[ $data =~ $ip_regex ]]; then
+		ip=${BASH_REMATCH[1]}
+		echo $ip
+	else
+		echo 1
+	fi
+}
+
+count=0
+
+while read l; do
+	if [[ $l =~ $mac_regex ]]; then
+		mac=${BASH_REMATCH[1]}
+		name=$(is_home $mac)
+		if [[ $name != "" ]]; then
+			((count+=1))
+			echo "$name is home"
+		fi
+	fi
+done < $residents
+
+if [[ $count -eq "0" ]]; then
+	echo "No one home"
+fi
