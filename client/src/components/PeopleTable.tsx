@@ -1,12 +1,13 @@
 import * as React from "react"
 import { Person, PersonItem } from "./Person"
+import { Model } from "../models/Model";
 import "style/modules/table"
 
-export interface PeopleTableProps { people: Person[]; }
+export interface PeopleTableProps { model: Model; }
 
 export class PeopleTable extends React.Component<PeopleTableProps, {}> {
     render() {
-      var people = this.props.people
+      var people = this.props.model.people
       var rows = people.map(function (person) {
         return (
           <PersonItem

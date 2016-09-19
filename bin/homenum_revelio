@@ -14,6 +14,8 @@ fi
 
 ip_regex='((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?))'
 mac_regex='(([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2}))'
+residents_regex=$mac_regex
+residents_regex="$residents_regex: (.*)"
 
 function is_home() {
 	if [[ -z $1 ]]; then
@@ -26,8 +28,9 @@ function is_home() {
 	result=$(check_connected $ip)
 
 	if [[ $result -eq "0" ]]; then
-		name=$(cat $residents | grep -E -o "^$mac: (.*)$" | awk '{ print $2 }')
-		echo $name
+		echo "true"
+	else
+		echo "false"
 	fi
 }
 
@@ -65,19 +68,14 @@ function device_ip() {
 	fi
 }
 
-count=0
-
+json="{\"people\": ["
 while read l; do
-	if [[ $l =~ $mac_regex ]]; then
+	if [[ $l =~ $residents_regex ]]; then
 		mac=${BASH_REMATCH[1]}
-		name=$(is_home $mac)
-		if [[ $name != "" ]]; then
-			((count+=1))
-			echo "$name is home"
-		fi
+		name=${BASH_REMATCH[4]}
+		status=$(is_home $mac)
+		json="$json{\"mac\": \"$mac\", \"name\": \"$name\", \"status\": $status},"
 	fi
 done < $residents
-
-if [[ $count -eq "0" ]]; then
-	echo "No one home"
-fi
+json=${json%?}
+echo "$json]}"

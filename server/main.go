@@ -5,7 +5,9 @@ import (
 	"flag"
 	"fmt"
 	"log"
+	"math/rand"
 	"net/http"
+	"os/exec"
 	"time"
 
 	eventsource "gopkg.in/antage/eventsource.v1"
@@ -47,7 +49,7 @@ func main() {
 	r.Handle("/updates", updatesHandler(c.events))
 	r.PathPrefix("/assets").Handler(http.StripPrefix("/assets", fileServer))
 
-	beginScanning(c)
+	beginScanning(c.events)
 
 	log.Println("Listening on localhost:", c.port)
 	port := fmt.Sprintf(":%d", c.port)
@@ -79,39 +81,53 @@ func updatesHandler(events chan event) http.Handler {
 				if err != nil {
 					log.Printf("JSON serialization failed, %v", err)
 				} else {
-					log.Println("Sending message")
 					es.SendEventMessage(string(packet), event.Type, "")
 				}
 			}
 		}()
 
+		updateStatus(events)
 		es.ServeHTTP(w, r)
 	})
 }
 
-func beginScanning(c *config) {
-	ticker := time.NewTicker(time.Second)
+func beginScanning(events chan event) {
+	ticker := time.NewTicker(time.Second * 10)
 	go func() {
 		for _ = range ticker.C {
-			log.Println("Tick")
-			people := checkHouse()
-			message := messageEvent{people}
-			c.events <- event{
-				Type: "message",
-				Data: message,
-			}
+			updateStatus(events)
 		}
 	}()
 }
 
-func checkHouse() []person {
-	elliot := person{Mac: "id1", Name: "Elliot", Status: true}
-	florian := person{Mac: "id2", Name: "Florian", Status: false}
-	alex := person{Mac: "id3", Name: "Alex", Status: false}
-	lottie := person{Mac: "id4", Name: "Lottie", Status: true}
-	jonathan := person{Mac: "id5", Name: "Jonathan", Status: false}
+func updateStatus(events chan event) {
+	events <- event{
+		Type: "message",
+		Data: checkHouse(),
+	}
+}
 
-	return []person{elliot, florian, alex, lottie, jonathan}
+func checkHouse() messageEvent {
+	cmd := exec.Command("./bin/homenum_revelio", "./residents.yaml")
+	stdout, err := cmd.StdoutPipe()
+	if err != nil {
+		log.Fatal(err)
+	}
+	if err := cmd.Start(); err != nil {
+		log.Fatal(err)
+	}
+	var group messageEvent
+	if err := json.NewDecoder(stdout).Decode(&group); err != nil {
+		log.Fatal(err)
+	}
+	if err := cmd.Wait(); err != nil {
+		log.Fatal(err)
+	}
+	return group
+}
+
+func randomBool() bool {
+	return int(rand.Float32()+0.5) == 1
 }
 
 func parseArgs() (c *config) {

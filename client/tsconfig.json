@@ -2,15 +2,19 @@
     "compilerOptions": {
         "outDir": "./dist/",
         "sourceMap": true,
-        "noImplicitAny": true,
+        "noImplicitAny": false,
         "module": "commonjs",
         "target": "es5",
-        "jsx": "react"
+        "jsx": "react",
+        "removeComments": true
     },
     "files": [
         "./typings/index.d.ts",
         "./src/components/PeopleTable.tsx",
         "./src/components/Person.tsx",
-        "./src/index.tsx"
+        "./src/index.tsx",
+        "./src/models/Model.ts",
+        "./src/protocol.d.ts",
+        "./src/sse.d.ts"
     ]
 }
