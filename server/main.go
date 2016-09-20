@@ -7,6 +7,7 @@ import (
 	"log"
 	"math/rand"
 	"net/http"
+	"os"
 	"os/exec"
 	"time"
 
@@ -46,7 +47,7 @@ func main() {
 
 	r := mux.NewRouter()
 	r.Handle("/", WhoIsHomeHandler(c.static))
-	r.Handle("/updates", updatesHandler(c.events))
+	r.Handle("/updates", updatesHandler(c))
 	r.PathPrefix("/assets").Handler(http.StripPrefix("/assets", fileServer))
 
 	beginScanning(c)
@@ -71,12 +72,12 @@ func WhoIsHomeHandler(static string) http.Handler {
 	})
 }
 
-func updatesHandler(events chan event) http.Handler {
+func updatesHandler(c *config) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		es := eventsource.New(nil, nil)
 
 		go func() {
-			for event := range events {
+			for event := range c.events {
 				packet, err := json.Marshal(event.Data)
 				if err != nil {
 					log.Printf("JSON serialization failed, %v", err)
@@ -86,7 +87,7 @@ func updatesHandler(events chan event) http.Handler {
 			}
 		}()
 
-		updateStatus(events)
+		updateStatus(c)
 		es.ServeHTTP(w, r)
 	})
 }
@@ -136,6 +137,10 @@ func parseArgs() (c *config) {
 	flag.StringVar(&c.static, "static", "./client", "")
 	flag.StringVar(&c.residents, "r", "./residents.yaml", "")
 	flag.Parse()
+
+	if _, err := os.Stat(c.residents); os.IsNotExist(err) {
+		log.Fatal(err)
+	}
 
 	return
 }
