@@ -1,7 +1,6 @@
 import * as React from "react"
 import { Person, PersonItem } from "./Person"
 import { Model } from "../models/Model";
-import "style/modules/table"
 
 export interface PeopleTableProps { model: Model; }
 

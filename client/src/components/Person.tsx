@@ -1,5 +1,4 @@
 import * as React from "react"
-import "style/modules/person"
 
 export interface IPerson { mac: string ; name: string; status: boolean }
 

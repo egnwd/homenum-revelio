@@ -6,4 +6,9 @@ client/dist
 client/node_modules
 client/typings
 
+bin/dist
+bin/server
+
 server/server
+
+*.tar.gz

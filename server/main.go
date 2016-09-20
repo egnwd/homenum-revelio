@@ -52,7 +52,7 @@ func main() {
 
 	beginScanning(c)
 
-	log.Println("Listening on localhost:", c.port)
+	log.Printf("Listening on localhost:%d\n", c.port)
 	port := fmt.Sprintf(":%d", c.port)
 	log.Fatal(http.ListenAndServe(port, Log(r)))
 }
@@ -134,7 +134,7 @@ func randomBool() bool {
 func parseArgs() (c *config) {
 	c = new(config)
 	flag.IntVar(&c.port, "p", 8080, "Port for the server")
-	flag.StringVar(&c.static, "static", "./client", "")
+	flag.StringVar(&c.static, "static", "./bin/dist", "")
 	flag.StringVar(&c.residents, "r", "./residents.yaml", "")
 	flag.Parse()
 

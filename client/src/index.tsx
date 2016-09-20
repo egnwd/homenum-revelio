@@ -8,8 +8,6 @@ import { PeopleTable } from "./components/PeopleTable"
 import { Person } from "./components/Person"
 import { Model } from "./models/Model"
 
-import "./style/main"
-
 let model = new Model()
 let source = new EventSource("/updates")
 
@@ -17,7 +15,7 @@ source.addEventListener("message", function(event) {
     let data = JSON.parse((event as sse.IOnMessageEvent).data)
     let message = (data as IMessage)
     let people = message.people
-    
+
     model.update(people)
 })
 
