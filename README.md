@@ -23,7 +23,7 @@ An idea about displaying who is currently at home, thanks to [Dan Slocombe](http
 
 ## Building
 
-  - Run `(cd client; npm install)` initially and if you add any packages
+  - Run `(cd client; npm install; typings install)` initially and if you add any packages
   - Run `./build.sh`
 
 ## Running
