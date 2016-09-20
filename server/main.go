@@ -49,7 +49,7 @@ func main() {
 	r.Handle("/updates", updatesHandler(c.events))
 	r.PathPrefix("/assets").Handler(http.StripPrefix("/assets", fileServer))
 
-	beginScanning(c.events)
+	beginScanning(c)
 
 	log.Println("Listening on localhost:", c.port)
 	port := fmt.Sprintf(":%d", c.port)
@@ -91,24 +91,24 @@ func updatesHandler(events chan event) http.Handler {
 	})
 }
 
-func beginScanning(events chan event) {
+func beginScanning(c *config) {
 	ticker := time.NewTicker(time.Second * 10)
 	go func() {
 		for _ = range ticker.C {
-			updateStatus(events)
+			updateStatus(c)
 		}
 	}()
 }
 
-func updateStatus(events chan event) {
-	events <- event{
+func updateStatus(c *config) {
+	c.events <- event{
 		Type: "message",
-		Data: checkHouse(),
+		Data: checkHouse(c.residents),
 	}
 }
 
-func checkHouse() messageEvent {
-	cmd := exec.Command("./bin/homenum_revelio", "./residents.yaml")
+func checkHouse(residents string) messageEvent {
+	cmd := exec.Command("./bin/homenum_revelio", residents)
 	stdout, err := cmd.StdoutPipe()
 	if err != nil {
 		log.Fatal(err)
